@@ -62,6 +62,7 @@ class GridWorld:
             self.world = [[self.__initial_state_value for _ in range(self.x)] for _ in range(self.y)]
         else:
             self.world = [[initial_state_value for _ in range(self.x)] for _ in range(self.y)]
+        self.terminal_states = []
         self.policy = [[["^", "v", "<", ">"] for _ in range(self.x)] for _ in range(self.y)]
     
     def set_state_value(self, x:int, y:int, value:float) -> None:
