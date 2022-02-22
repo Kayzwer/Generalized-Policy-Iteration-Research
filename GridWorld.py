@@ -7,6 +7,7 @@ class GridWorld:
         self.__initial_state_value = initial_state_value
         self.world = [[initial_state_value for _ in range(x)] for _ in range(y)]
         self.policy = [[["^", "v", "<", ">"] for _ in range(x)] for _ in range(y)]
+        self.states_reward = {}
         self.terminal_states = []
     
     def __str__(self) -> str:
@@ -60,6 +61,9 @@ class GridWorld:
         self.world[y][x] = 0
         self.policy[y][x] = []
     
+    def set_state_reward(self, x:int, y:int, r:float) -> None:
+        self.states_reward[(x, y)] = r
+    
     def reset(self, initial_state_value:float = None) -> None:
         if not initial_state_value:
             self.world = [[self.__initial_state_value for _ in range(self.x)] for _ in range(self.y)]
@@ -96,7 +100,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = step_cost + gamma * sum(directions) / len(directions)
+                    new_world[y][x] = self.states_reward[(x, y)] if (x, y) in self.states_reward else 0 + step_cost + gamma * sum(directions) / len(directions)
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -124,7 +128,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = step_cost + gamma * sum(directions) / len(directions)
+                    new_world[y][x] = self.states_reward[(x, y)] if (x, y) in self.states_reward else 0 + step_cost + gamma * sum(directions) / len(directions)
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
