@@ -100,7 +100,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = (self.states_reward[(x, y)] if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions))
+                    new_world[y][x] = (self.states_reward.get((x, y)) if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions))
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -128,7 +128,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = (self.states_reward[(x, y)] if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions)) 
+                    new_world[y][x] = (self.states_reward.get((x, y)) if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions)) 
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -175,19 +175,19 @@ class GridWorld:
     def get_directions_value(self, x:int, y:int) -> tuple:
         try:
             up = self.get_state_value(x, y - 1)
-        except:
+        except IndexError:
             up = self.get_state_value(x, y)
         try:
             down = self.get_state_value(x, y + 1)
-        except:
+        except IndexError:
             down = self.get_state_value(x, y)
         try:
             left = self.get_state_value(x - 1, y)
-        except:
+        except IndexError:
             left = self.get_state_value(x, y)
         try:
             right = self.get_state_value(x + 1, y)
-        except:
+        except IndexError:
             right = self.get_state_value(x, y)
         
         return (up, down, left, right)
