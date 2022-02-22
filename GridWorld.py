@@ -66,6 +66,8 @@ class GridWorld:
         self.policy = [[["^", "v", "<", ">"] for _ in range(self.x)] for _ in range(self.y)]
     
     def set_state_value(self, x:int, y:int, value:float) -> None:
+        if x < 0 or x >= self.x or y < 0 or y >= self.y:
+            raise Exception("Input is out of gridworld range")
         if self.world[y][x] == "B":
             raise Exception("Given position is a block")
         else:
