@@ -105,12 +105,18 @@ class GridWorld:
         else:
             return self.world[y][x]
     
-    def policy_improvement(self) -> None:
+    def policy_improvement(self) -> bool:
+        new_policy = [[x for x in y] for y in self.policy]
         for y in range(self.y):
             for x in range(self.x):
                 if (x, y) in self.terminal_states or self.world[y][x] == "B":
                     continue
-                self.policy[y][x] = self.best_direction(x, y)
+                new_policy[y][x] = self.best_direction(x, y)
+        if self.policy != new_policy:
+            self.policy = new_policy
+            return False
+        else:
+            return True
     
     def best_direction(self, x:int, y:int) -> list:
         directions = []
@@ -148,10 +154,20 @@ class GridWorld:
         
         return (up, down, left, right)
     
-    def value_iteration(self, iteration:int, gamma:float, step_cost:float, print_status:bool) -> None:    
-        for _ in range(iteration):
+    def value_iteration(self, iteration:int, gamma:float, step_cost:float, print_status:bool) -> None:
+        for i in range(iteration):
             self.policy_evaluation(1, gamma, step_cost)
-            self.policy_improvement()
+            if self.policy_improvement():
+                print("Policy Stabled")
+                break
+            print(f"Iteration: {i + 1}")
             if print_status:
                 print(self)
                 print(self.policy_to_str())
+
+
+if __name__ == "__main__":
+    temp = GridWorld(5, 5)
+    temp.set_terminal_state(0, 0)
+    temp.set_terminal_state(3, 3)
+    temp.value_iteration(100, 1, -1, True)
