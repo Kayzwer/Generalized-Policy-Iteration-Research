@@ -100,7 +100,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = self.states_reward[(x, y)] if (x, y) in self.states_reward else 0 + step_cost + gamma * sum(directions) / len(directions)
+                    new_world[y][x] = (self.states_reward[(x, y)] if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions))
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -128,7 +128,7 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = self.states_reward[(x, y)] if (x, y) in self.states_reward else 0 + step_cost + gamma * sum(directions) / len(directions)
+                    new_world[y][x] = (self.states_reward[(x, y)] if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions)) 
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -140,8 +140,7 @@ class GridWorld:
             raise Exception("Input is out of gridworld range")
         if self.world[y][x] == "B":
             raise Exception("Block does not have value")
-        else:
-            return self.world[y][x]
+        return self.world[y][x]
     
     def policy_improvement(self, total_step:int) -> bool and int:
         total_step += 1
