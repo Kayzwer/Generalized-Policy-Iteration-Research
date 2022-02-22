@@ -32,6 +32,7 @@ class GridWorld:
         if x >= self.x or y >= self.y or x < 0 or y < 0:
             raise Exception("Input is out of gridworld range")
         self.world[y][x] = "B"
+        self.policy[y][x] = []
 
     def build_wall(self, start:tuple, end:tuple) -> None:
         for x, y in zip(start, end):
@@ -46,9 +47,11 @@ class GridWorld:
         if start[0] == end[0]:
             for i in range(start[1], end[1] + 1):
                 self.world[i][start[0]] = "B"
+                self.policy[i][start[0]] = []
         elif start[1] == end[1]:
             for i in range(start[0], end[0] + 1):
                 self.world[start[1]][i] = "B"
+                self.policy[start[1]][i] = []
         else:
             raise Exception("Invalid input, must be in form of (x, i), (x, j) or (i, y), (j, y) where i < j")
     
@@ -78,7 +81,7 @@ class GridWorld:
             new_world = [[x for x in y] for y in self.world]
             for y in range(self.y):
                 for x in range(self.x):
-                    if (x, y) in self.terminal_states:
+                    if (x, y) in self.terminal_states or self.world[y][x] == "B":
                         continue
                     up, down, left, right = self.get_directions_value(x, y)
                     directions = []
@@ -98,14 +101,14 @@ class GridWorld:
         if x < 0 or x >= self.x or y < 0 or y >= self.y:
             raise Exception("Input is out of gridworld range")
         if self.world[y][x] == "B":
-            return 0.0
+            raise Exception("Block does not have value")
         else:
             return self.world[y][x]
     
     def policy_improvement(self) -> None:
         for y in range(self.y):
             for x in range(self.x):
-                if (x, y) in self.terminal_states:
+                if (x, y) in self.terminal_states or self.world[y][x] == "B":
                     continue
                 self.policy[y][x] = self.best_direction(x, y)
     
@@ -145,18 +148,10 @@ class GridWorld:
         
         return (up, down, left, right)
     
-    def value_iteration(self, iteration:int, gamma:float, step_cost:float) -> None:
+    def value_iteration(self, iteration:int, gamma:float, step_cost:float, print_status:bool) -> None:    
         for _ in range(iteration):
             self.policy_evaluation(1, gamma, step_cost)
             self.policy_improvement()
-
-
-if __name__ == "__main__":
-    temp = GridWorld(4, 4)
-    temp.set_terminal_state(0, 0)
-    temp.set_terminal_state(3, 3)
-    print(temp)
-    temp.policy_evaluation(3, 1, -1)
-    print(temp)
-    temp.policy_improvement()
-    print(temp.policy_to_str())
+            if print_status:
+                print(self)
+                print(self.policy_to_str())
