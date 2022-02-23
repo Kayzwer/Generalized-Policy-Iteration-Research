@@ -99,11 +99,17 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = (self.states_reward.get((x, y)) if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions))
+                    if (x, y) in self.states_reward:
+                        new_world[y][x] = self.states_reward.get((x, y))
+                    elif step_cost:
+                        new_world[y][x] = step_cost
+                    else:
+                        new_world[y][x] = self.world[y][x]
+                    new_world[y][x] += gamma * (sum(directions) / len(directions))
             self.world = new_world
         return total_step
     
-    def __policy_evaluation_for_policy_iteration(self, gamma:float, step_cost:float, theta:float, total_step:int) -> int:
+    def policy_evaluation_for_policy_iteration(self, gamma:float, step_cost:float, theta:float, total_step:int) -> int:
         while True:
             total_step += 1
             delta = 0
@@ -123,7 +129,13 @@ class GridWorld:
                             directions.append(left)
                         if direction == ">":
                             directions.append(right)
-                    new_world[y][x] = (self.states_reward.get((x, y)) if (x, y) in self.states_reward else step_cost) + gamma * (sum(directions) / len(directions)) 
+                    if (x, y) in self.states_reward:
+                        new_world[y][x] = self.states_reward.get((x, y))
+                    elif step_cost:
+                        new_world[y][x] = step_cost
+                    else:
+                        new_world[y][x] = self.world[y][x]
+                    new_world[y][x] += gamma * (sum(directions) / len(directions))
                     delta = max(delta, abs(new_world[y][x] - self.world[y][x]))
             if delta < theta:
                 self.world = new_world
@@ -193,7 +205,7 @@ class GridWorld:
         while True:
             iteration += 1
             print(f"Iteration: {iteration}")
-            total_step = self.__policy_evaluation_for_policy_iteration(gamma, step_cost, theta, total_step)
+            total_step = self.policy_evaluation_for_policy_iteration(gamma, step_cost, theta, total_step)
             stable, total_step = self.policy_improvement(total_step)
             if stable:
                 print("Policy Stabled")
@@ -234,14 +246,3 @@ class GridWorld:
             if print_status:
                 print(self)
                 print(self.policy_to_str())
-
-
-def main():
-    temp = GridWorld(4, 4)
-    temp.set_terminal_state(0, 0)
-    temp.set_terminal_state(3, 3)
-    temp.value_iteration(1, -1, True)
-
-
-if __name__ == "__main__":
-    main()
