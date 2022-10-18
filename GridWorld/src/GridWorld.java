@@ -235,6 +235,7 @@ public class GridWorld {
                 break;
             }
         }
+        System.out.println("Step: " + step);
     }
 
     public double getStateValueDiff(double[][] state_values) {
