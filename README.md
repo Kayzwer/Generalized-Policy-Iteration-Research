@@ -1,7 +1,3 @@
-# Generalized-Policy-Iteration-Research (SHIN Value Iteration)
-SHIN Value Iteration is a newly created algorithm that combine Value Iteration and Policy Iteration. SHIN Value Iteration also can outperform them in some type of Grid World which takes fewer steps to reach convergence.
-
-
 Example:
 
 ![image](https://user-images.githubusercontent.com/68285002/196347919-efad9070-4ed3-4344-b71d-a9b6bda22b89.png)
